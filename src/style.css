@@ -1,0 +1,292 @@
+/* Playful Yet Serious Terminal Theme */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: #1a1a1a;
+  color: #e0e0e0;
+  line-height: 1.6;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.container {
+  text-align: center;
+  max-width: 500px;
+  width: 100%;
+  padding: 2rem;
+}
+
+.title {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-weight: 100;
+  font-size: 2.5rem;
+  margin-bottom: 2rem;
+  color: #ffffff;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.input-group {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: center;
+  margin-bottom: 0.5rem;
+}
+
+.signature-input {
+  padding: 0.75rem;
+  font-size: 1rem;
+  border: 1px solid #333;
+  border-radius: 4px;
+  width: 200px;
+  background: #2a2a2a;
+  color: #e0e0e0;
+}
+
+.signature-input:focus {
+  outline: none;
+  border-color: #007bff;
+  background: #333;
+}
+
+.signature-input::placeholder {
+  color: #888;
+}
+
+.search-btn {
+  padding: 0.75rem 1rem;
+  font-size: 1rem;
+  background: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.search-btn:hover {
+  background: #0056b3;
+}
+
+.helper-text {
+  margin-top: 0.5rem;
+  font-size: 0.9rem;
+  color: #888;
+}
+
+.helper-text a {
+  color: #007bff;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.helper-text a:hover {
+  color: #0056b3;
+  text-decoration: underline;
+}
+
+.loading {
+  margin-top: 1rem;
+}
+
+.loading.hidden {
+  display: none;
+}
+
+.loading p {
+  color: #888;
+}
+
+.spinner {
+  width: 20px;
+  height: 20px;
+  border: 2px solid #333;
+  border-top: 2px solid #007bff;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 0.5rem;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Modal */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal.hidden {
+  display: none;
+}
+
+.modal-content {
+  background: #2a2a2a;
+  border-radius: 8px;
+  max-width: 600px;
+  width: 90%;
+  max-height: 80vh;
+  overflow-y: auto;
+  border: 1px solid #333;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  border-bottom: 1px solid #333;
+}
+
+.modal-header h3 {
+  margin: 0;
+  font-size: 1.2rem;
+  color: #ffffff;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: #888;
+}
+
+.close-btn:hover {
+  color: #e0e0e0;
+}
+
+.modal-body {
+  padding: 1rem;
+  color: #e0e0e0;
+}
+
+/* Accordion */
+.accordion {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.accordion-item {
+  border: 1px solid #333;
+  border-radius: 4px;
+  overflow: hidden;
+  background: #333;
+}
+
+.accordion-header {
+  width: 100%;
+  padding: 1rem;
+  background: #333;
+  border: none;
+  text-align: left;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 1rem;
+  font-weight: 500;
+  color: #e0e0e0;
+}
+
+.accordion-header:hover {
+  background: #444;
+}
+
+.accordion-icon {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #888;
+}
+
+.accordion-content {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease;
+  background: #2a2a2a;
+}
+
+.accordion-content p {
+  padding: 1rem;
+  margin: 0;
+  color: #ccc;
+  line-height: 1.6;
+}
+
+.accordion-item.active .accordion-header {
+  background: #444;
+}
+
+.signatures-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 0.5rem;
+}
+
+.signatures-table th {
+  background: #333;
+  color: #ffffff;
+  padding: 0.75rem;
+  text-align: left;
+  font-weight: 600;
+  border-bottom: 2px solid #444;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.signatures-table td {
+  padding: 0.75rem;
+  border-bottom: 1px solid #333;
+  vertical-align: top;
+}
+
+
+
+.signature-text {
+  font-weight: 600;
+  word-break: break-all;
+  color: #ffffff;
+  max-width: 300px;
+}
+
+.signature-date {
+  font-size: 0.85rem;
+  color: #888;
+  white-space: nowrap;
+}
+
+.signature-selector {
+  font-family: monospace;
+  font-size: 0.85rem;
+  color: #007bff;
+  background: rgba(0, 123, 255, 0.1);
+  padding: 0.25rem 0.5rem;
+  border-radius: 3px;
+  border: 1px solid rgba(0, 123, 255, 0.3);
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.error-message,
+.no-results {
+  text-align: center;
+  color: #888;
+} 
