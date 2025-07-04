@@ -22,6 +22,9 @@ class SignatureLookup {
   private modalContent!: HTMLElement;
   private helpModal!: HTMLElement;
   private loadingElement!: HTMLElement;
+  private searchBtn!: HTMLButtonElement;
+  private modeLink!: HTMLAnchorElement;
+  private isAddMode: boolean = false;
 
   constructor() {
     this.app = document.querySelector<HTMLDivElement>('#app')!;
@@ -44,14 +47,17 @@ class SignatureLookup {
             />
             <button id="search-btn" class="search-btn">Decode</button>
           </div>
+          
           <p class="helper-text">
-            <a href="#" id="help-link">What is this?</a>
+            <a href="#" id="help-link">Help</a>
+            <span class="separator">•</span>
+            <a href="#" id="mode-link">Add Selector</a>
           </p>
         </div>
 
         <div id="loading" class="loading hidden">
           <div class="spinner"></div>
-          <p>Decoding...</p>
+          <p id="loading-text">Decoding...</p>
         </div>
       </div>
 
@@ -123,20 +129,26 @@ class SignatureLookup {
     this.modalContent = document.querySelector<HTMLDivElement>('#modal-body')!;
     this.helpModal = document.querySelector<HTMLDivElement>('#help-modal')!;
     this.loadingElement = document.querySelector<HTMLDivElement>('#loading')!;
+    this.searchBtn = document.querySelector<HTMLButtonElement>('#search-btn')!;
+    this.modeLink = document.querySelector<HTMLAnchorElement>('#mode-link')!;
   }
 
   private setupEventListeners(): void {
-    const searchBtn = document.querySelector<HTMLButtonElement>('#search-btn')!;
     const closeBtn = document.querySelector<HTMLButtonElement>('#close-modal')!;
     const helpLink = document.querySelector<HTMLAnchorElement>('#help-link')!;
     const closeHelpBtn = document.querySelector<HTMLButtonElement>('#close-help-modal')!;
     
-    searchBtn.addEventListener('click', () => this.searchSignatures());
+    this.searchBtn.addEventListener('click', () => this.handleAction());
     
     this.input.addEventListener('keypress', (e) => {
       if (e.key === 'Enter') {
-        this.searchSignatures();
+        this.handleAction();
       }
+    });
+
+    this.modeLink.addEventListener('click', (e) => {
+      e.preventDefault();
+      this.toggleMode();
     });
 
     closeBtn.addEventListener('click', () => this.closeModal());
@@ -164,6 +176,33 @@ class SignatureLookup {
 
     // Focus on input when page loads
     this.input.focus();
+  }
+
+  private toggleMode(): void {
+    this.isAddMode = !this.isAddMode;
+    this.updateUIForMode();
+  }
+
+  private updateUIForMode(): void {
+    if (this.isAddMode) {
+      this.searchBtn.textContent = 'Add';
+      this.input.placeholder = 'transfer(address,uint256)';
+      this.input.classList.add('wide-input');
+      this.modeLink.textContent = 'Decode Selector';
+    } else {
+      this.searchBtn.textContent = 'Decode';
+      this.input.placeholder = '0xa9059cbb';
+      this.input.classList.remove('wide-input');
+      this.modeLink.textContent = 'Add Selector';
+    }
+  }
+
+  private handleAction(): void {
+    if (this.isAddMode) {
+      this.addSignature();
+    } else {
+      this.searchSignatures();
+    }
   }
 
   private setupAccordion(): void {
@@ -216,7 +255,7 @@ class SignatureLookup {
       return;
     }
 
-    this.showLoading();
+    this.showLoading('Decoding...');
     
     try {
       const response = await fetch(`https://www.4byte.directory/api/v1/signatures/?hex_signature=${signature}`);
@@ -230,6 +269,50 @@ class SignatureLookup {
     } catch (error) {
       console.error('Error fetching signatures:', error);
       this.showError('Network error. Please try again.');
+    } finally {
+      this.hideLoading();
+    }
+  }
+
+  private async addSignature(): Promise<void> {
+    const signature = this.input.value.trim();
+    
+    if (!signature) {
+      this.showError('Please enter a function signature');
+      return;
+    }
+
+    // Basic validation for function signature format
+    if (!/^[a-zA-Z_][a-zA-Z0-9_]*\([^)]*\)$/.test(signature)) {
+      this.showError('Invalid function signature format (try: transfer(address,uint256))');
+      return;
+    }
+
+    this.showLoading('Adding signature...');
+    
+    try {
+      const response = await fetch('https://www.4byte.directory/api/v1/signatures/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          text_signature: signature
+        })
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.log(errorData);
+        throw new Error(errorData.text_signature?.[0] || `HTTP error! status: ${response.status}`);
+      }
+      
+      const data: SignatureResult = await response.json();
+      console.log(data);
+      this.displayAddResults(data);
+    } catch (error) {
+      console.error('Error adding signature:', error);
+      this.showError(error instanceof Error ? error.message : 'Network error. Please try again.');
     } finally {
       this.hideLoading();
     }
@@ -268,6 +351,24 @@ class SignatureLookup {
     this.showModal();
   }
 
+  private displayAddResults(data: SignatureResult): void {
+    const modalTitle = document.querySelector<HTMLHeadingElement>('#modal-title')!;
+    modalTitle.textContent = 'Signature Added';
+    
+    this.modalContent.innerHTML = `
+      <div class="add-results">
+        <p><strong>Function signature:</strong> ${data.text_signature}</p>
+        <p><strong>Hex signature:</strong> <span class="hex-signature">${data.hex_signature}</span></p>
+        <p><strong>Added on:</strong> ${new Date(data.created_at).toLocaleString()}</p>
+        <p class="success-message">
+          ✅ Signature successfully added to the database!
+        </p>
+      </div>
+    `;
+    
+    this.showModal();
+  }
+
   private showError(message: string): void {
     const modalTitle = document.querySelector<HTMLHeadingElement>('#modal-title')!;
     modalTitle.textContent = 'Error';
@@ -295,7 +396,9 @@ class SignatureLookup {
     this.helpModal.classList.add('hidden');
   }
 
-  private showLoading(): void {
+  private showLoading(text: string = 'Loading...'): void {
+    const loadingText = document.querySelector<HTMLParagraphElement>('#loading-text')!;
+    loadingText.textContent = text;
     this.loadingElement.classList.remove('hidden');
   }
 

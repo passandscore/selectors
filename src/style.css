@@ -60,6 +60,10 @@ body {
   color: #888;
 }
 
+.signature-input.wide-input {
+  width: 400px;
+}
+
 .search-btn {
   padding: 0.75rem 1rem;
   font-size: 1rem;
@@ -89,6 +93,11 @@ body {
 .helper-text a:hover {
   color: #0056b3;
   text-decoration: underline;
+}
+
+.separator {
+  color: #888;
+  margin: 0 0.5rem;
 }
 
 .loading {
@@ -258,8 +267,6 @@ body {
   vertical-align: top;
 }
 
-
-
 .signature-text {
   font-weight: 600;
   word-break: break-all;
@@ -288,5 +295,68 @@ body {
 .error-message,
 .no-results {
   text-align: center;
+  padding: 1rem;
+  color: #e0e0e0;
+}
+
+.add-results {
+  padding: 1rem;
+}
+
+.add-results p {
+  margin-bottom: 1rem;
+  color: #e0e0e0;
+}
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+  margin: 1rem 0;
+  padding: 1rem;
+  background: #333;
+  border-radius: 4px;
+  border: 1px solid #555;
+}
+
+.stat-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem;
+  background: #2a2a2a;
+  border-radius: 4px;
+  border: 1px solid #444;
+}
+
+.stat-label {
   color: #888;
+  font-size: 0.9rem;
+}
+
+.stat-value {
+  color: #007bff;
+  font-weight: bold;
+  font-size: 1.1rem;
+}
+
+.success-message {
+  text-align: center;
+  padding: 1rem;
+  background: #1a3a1a;
+  border: 1px solid #2d5a2d;
+  border-radius: 4px;
+  color: #4caf50;
+  font-weight: bold;
+}
+
+.hex-signature {
+  font-family: monospace;
+  font-size: 0.9rem;
+  color: #007bff;
+  background: rgba(0, 123, 255, 0.1);
+  padding: 0.25rem 0.5rem;
+  border-radius: 3px;
+  border: 1px solid rgba(0, 123, 255, 0.3);
+  font-weight: 500;
 } 
